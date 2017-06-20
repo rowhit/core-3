@@ -166,6 +166,20 @@ class LoginController extends Controller {
 			$parameters['user_autofocus'] = true;
 		}
 
+		/**
+		 * If redirect_url is not null and remember_login is null and
+		 * user not logged in and check if the string
+		 * webroot+"/index.php/f/" is in redirect_url then
+		 * user is trying to access files for which he needs to login.
+		 */
+		$fpath = \OC::$WEBROOT. "/index.php/f/";
+		if (( $redirect_url !== null) and ($remember_login === null) and
+			($this->userSession->isLoggedIn() === false) and
+			strpos(urldecode($redirect_url), $fpath) !== false) {
+
+			$parameters['accessLink'] = true;
+		}
+
 		return new TemplateResponse(
 			$this->appName, 'login', $parameters, 'guest'
 		);
